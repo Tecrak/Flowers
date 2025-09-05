@@ -13,7 +13,7 @@ export function MainPage() {
 
   useEffect(() => {
     // Підключення до твого Render вебсервісу
-    fetch("https://YOUR_RENDER_API_URL/api/flowers") // заміни на свій Render URL
+    fetch("postgresql://dbflower_user:n7XnpUufCGUHQCHngxQdT6h20Jh8gIuz@dpg-d2tfjeur433s73dcfok0-a/dbflower") // заміни на свій Render URL
       .then((res) => res.json())
       .then((data) => setFlowers(data))
       .catch((err) => console.error("Error fetching flowers:", err));

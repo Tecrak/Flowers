@@ -23,7 +23,7 @@ const pool = new Pool({
 });
 
 // Middleware
-app.use(cors()); // дозволяємо запити з будь-якого origin
+app.use(cors({ origin: "*" })); // дозволяємо запити з будь-якого origin
 app.use(express.json());
 
 // API: отримати список квітів
