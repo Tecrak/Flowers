@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import { fileURLToPath } from "url";
 import pkg from "pg";
 import dotenv from "dotenv";
 
@@ -7,6 +8,10 @@ dotenv.config(); // для .env файлу
 
 const { Pool } = pkg;
 const app = express();
+
+// Встановлюємо __dirname для ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Порт, який надає Render
 const PORT = process.env.PORT || 3000;
@@ -20,7 +25,7 @@ const pool = new Pool({
 // Middleware для парсингу JSON
 app.use(express.json());
 
-// API приклад: отримати список квітів
+// API: отримати список квітів
 app.get("/api/flowers", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM flowers");
@@ -31,7 +36,7 @@ app.get("/api/flowers", async (req, res) => {
   }
 });
 
-// API приклад: створити нове замовлення
+// API: створити нове замовлення
 app.post("/api/orders", async (req, res) => {
   const { user_id, flower_id, quantity } = req.body;
   try {
@@ -47,10 +52,10 @@ app.post("/api/orders", async (req, res) => {
 });
 
 // Роздача React фронтенду
-const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "build")));
 
-app.get("*", (req, res) => {
+// Маршрут для всіх інших запитів (React SPA)
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
