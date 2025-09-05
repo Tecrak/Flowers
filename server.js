@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 
 // Підключення до PostgreSQL через internal URL Render
 const pool = new Pool({
-  connectionString: "postgresql://dbflower_user:n7XnpUufCGUHQCHngxQdT6h20Jh8gIuz@dpg-d2tfjeur433s73dcfok0-a.frankfurt-postgres.render.com/dbflower",
+  connectionString: "postgresql://dbflower_user:n7XnpUufCGUHQCHngxQdT6h20Jh8gIuz@dpg-d2tfjeur433s73dcfok0-a/dbflower",
   // SSL не потрібен для internal URL
 });
 
