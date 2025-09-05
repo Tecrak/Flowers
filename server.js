@@ -26,7 +26,16 @@ const pool = new Pool({
 app.use(cors()); // дозволяємо запити з будь-якого origin
 app.use(express.json());
 
-// API: отримати список квітів
+app.get("/api/flowershop", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM flowershop ORDER BY id");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching flowers:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
 app.get("/api/flowers", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM flowerslist ORDER BY id");
@@ -37,20 +46,7 @@ app.get("/api/flowers", async (req, res) => {
   }
 });
 
-// API: створити нове замовлення
-app.post("/api/orders", async (req, res) => {
-  const { user_id, flower_id, quantity } = req.body;
-  try {
-    const result = await pool.query(
-      "INSERT INTO orders (user_id, flower_id, quantity) VALUES ($1, $2, $3) RETURNING *",
-      [user_id, flower_id, quantity]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error("Error creating order:", err);
-    res.status(500).json({ error: "Database error" });
-  }
-});
+
 
 // Роздача React фронтенду
 app.use(express.static(path.join(__dirname, "build")));

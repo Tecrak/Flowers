@@ -8,8 +8,15 @@ type Flower = {
   imgPath: string;
 };
 
+type FlowerShop = {
+  id: number;
+  name: string;
+  flowers: string; 
+};
+
 export function MainPage() {
   const [flowers, setFlowers] = useState<Flower[]>([]);
+  const [shops, setShops] = useState<FlowerShop[]>([]);
 
     useEffect(() => {
     fetch("https://flowers-1-h1qt.onrender.com/api/flowers")
@@ -24,17 +31,31 @@ export function MainPage() {
         .catch((err) => console.error("Error fetching flowers:", err));
     }, []);
 
+    useEffect(() => {
+    fetch("https://flowers-1-h1qt.onrender.com/api/flowershop")
+        .then((res) => res.json())
+        .then((data) => {
+        if (Array.isArray(data)) {
+            setShops(data);
+        } else {
+            console.error("Flowers data is not an array:", data);
+        }
+        })
+        .catch((err) => console.error("Error fetching flowers:", err));
+    }, []);
+
+
   return (
     <div className="container">
       <div className="shopList">
         <p>Shops</p>
-        <ul>
-          <li>Flowery Fragrant</li>
-          <li>Bloomwell</li>
-          <li>Petal Pushers</li>
-          <li>Floral Fantasies</li>
-          <li>Garden Grace</li>
-        </ul>
+          <ul>
+              {shops.map(shop => (
+                <li key={shop.id}>
+                  {shop.name}
+                </li>
+              ))}
+            </ul>
       </div>
 
       <div className="flowerList">
