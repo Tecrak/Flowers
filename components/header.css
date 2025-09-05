@@ -1,0 +1,23 @@
+header {
+    font-size: 19px;
+    height: 10vh;
+}
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: rgba(71, 166, 255, 0.423);
+}
+.leftPart > a {
+    padding:10px;
+}
+.leftPart > a:first-child {
+    padding:10px 24px 10px 10px;
+    border-right: 2px solid grey;
+}
+.logoImg > *{
+    width: 30px;
+    height: 30px;
+    padding: 0;
+}

@@ -1,0 +1,94 @@
+.container {
+    background: rgb(255, 235, 157);
+    display: flex;
+    justify-content: space-between;
+    height: 90vh;
+    /* flex-direction: column; */
+}
+/* Shplist part */
+.shopList {
+    border:1px grey solid;
+    background: white;
+    width: 20vw;
+    border-radius: 0px 10px 10px 0px;
+    text-align: center;
+}
+.shopList > p {
+    font-size: 26px;
+    padding-top:30px;
+    font-weight: bold;
+}
+.shopList > ul {
+    /* background: grey; */
+    margin: 0 auto;
+}
+.shopList > ul > li {
+    /* background: yellow; */
+    padding: 13px;
+    width: 150px;
+    margin: 10px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    height: 35px;
+    border:1px grey solid;
+    transition: 0.15s;
+}
+.shopList > ul > li:hover {
+    background: lightgrey;
+    cursor: pointer;
+}
+/* Shplist part  END*/
+
+/* flowerList part */
+.flowerList {
+    /* background: green; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    overflow: scroll;
+    width: 550px;
+    height: 90vh;
+}
+.flowerItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: 0.15s;
+    padding: 5px;
+    margin: 0;
+}
+.flowerItem:hover {
+    background: rgba(93, 93, 255, 0.404);
+}
+.flowerItem > *:not(img) {
+    margin: 6px;
+}
+.flowerItem > * {
+    margin:2px;
+}
+.flowerItem img {
+    width: 250px;
+    height: 250px;
+}
+.flowerItem p {
+    text-align: center;
+    font-weight: bold;
+    font-size: 17px;
+}
+.flowerItem button {
+    width: 100px;
+    height: 40px;
+    border-radius: 5px;
+    border: none;
+    transition: 0.2s;
+}
+.flowerItem button:hover {
+    background: rgb(255, 52, 38);
+    font-weight: bold;
+    color:white;
+    cursor: pointer;
+}
+/* flowerList part END*/

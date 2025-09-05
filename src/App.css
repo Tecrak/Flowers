@@ -1,0 +1,23 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  display: flex;
+  flex-direction: column; /* вертикальна колонка */
+}
+body {
+  display: grid;
+  grid-template-rows: 80px 1fr; /* перший рядок 80px, другий - вся решта */
+}
+.main {
+  display: flex;
+  flex-direction: column;
+}
+a {
+  text-decoration: none;
+  color: black;
+}
+li {
+  list-style: none;
+}
