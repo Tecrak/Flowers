@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import pkg from "pg";
 import dotenv from "dotenv";
 
-dotenv.config(); // для .env файлу
+dotenv.config();
 
 const { Pool } = pkg;
 const app = express();
@@ -13,16 +13,15 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Порт, який надає Render
 const PORT = process.env.PORT || 3000;
 
 // Підключення до PostgreSQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }, // для Render
+  ssl: { rejectUnauthorized: false },
 });
 
-// Middleware для парсингу JSON
+// Middleware для JSON
 app.use(express.json());
 
 // API: отримати список квітів
@@ -54,8 +53,8 @@ app.post("/api/orders", async (req, res) => {
 // Роздача React фронтенду
 app.use(express.static(path.join(__dirname, "build")));
 
-// Маршрут для всіх інших запитів (React SPA)
-app.get("/*", (req, res) => {
+// Catch-all для React SPA
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
