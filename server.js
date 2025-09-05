@@ -10,7 +10,7 @@ dotenv.config();
 const { Pool } = pkg;
 const app = express();
 
-// Встановлюємо __dirname для ES Modules
+// __dirname для ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -19,11 +19,11 @@ const PORT = process.env.PORT || 3000;
 // Підключення до PostgreSQL через internal URL Render
 const pool = new Pool({
   connectionString: "postgresql://dbflower_user:n7XnpUufCGUHQCHngxQdT6h20Jh8gIuz@dpg-d2tfjeur433s73dcfok0-a/dbflower",
-  // ssl не потрібен для internal URL
+  // SSL не потрібен для internal URL
 });
 
 // Middleware
-app.use(cors({ origin: "*" })); // дозволяємо запити з будь-якого origin
+app.use(cors()); // дозволяємо запити з будь-якого origin
 app.use(express.json());
 
 // API: отримати список квітів
