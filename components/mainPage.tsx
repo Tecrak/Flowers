@@ -42,7 +42,7 @@ export function MainPage() {
           <div className="flowerItem" key={flower.id}>
             <img src={flower.imgPath} alt={flower.name} />
             <p>{flower.name}</p>
-            <span>${flower.price.toFixed(2)}</span>
+            <span>${Number(flower.price).toFixed(2)}</span>
             <button>Add to Cart</button>
           </div>
         ))}
