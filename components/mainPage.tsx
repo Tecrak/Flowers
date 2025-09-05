@@ -35,7 +35,7 @@ export function MainPage() {
   useEffect(() => {
     if (flowers.length === 0) return; // чекаємо поки квіти завантажаться
 
-    fetch("https://flowers-1-h1qt.onrender.com/api/flowershops")
+    fetch("https://flowers-1-h1qt.onrender.com/api/flowershop")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
