@@ -16,37 +16,37 @@ export function MainPage() {
                 </div>
                 <div className="flowerList">
                     <div className="flowerItem">
-                        <img src=".../public/flower.jpeg" alt="Red Rose" />
+                        <img src="/flower.jpeg" alt="Red Rose" />
                         <p>Red Rose</p>
                         <span>$10.00</span>
                         <button>Add to Cart</button>
                     </div>
                     <div className="flowerItem">
-                        <img src="../public/flower.jpeg" alt="Red Rose" />
+                        <img src="/flower.jpeg" alt="Red Rose" />
                         <p>Red Rose</p>
                         <span>$10.00</span>
                         <button>Add to Cart</button>
                     </div>
                     <div className="flowerItem">
-                        <img src="./public/flower.jpeg" alt="Red Rose" />
+                        <img src="/flower.jpeg" alt="Red Rose" />
                         <p>Red Rose</p>
                         <span>$10.00</span>
                         <button>Add to Cart</button>
                     </div>
                     <div className="flowerItem">
-                        <img src="/public/flower.jpeg" alt="Red Rose" />
+                        <img src="/flower.jpeg" alt="Red Rose" />
                         <p>Red Rose</p>
                         <span>$10.00</span>
                         <button>Add to Cart</button>
                     </div>
                     <div className="flowerItem">
-                        <img src="../public/flower.jpeg" alt="Red Rose" />
+                        <img src="/flower.jpeg" alt="Red Rose" />
                         <p>Red Rose</p>
                         <span>$10.00</span>
                         <button>Add to Cart</button>
                     </div>
                     <div className="flowerItem">
-                        <img src="../public/flower.jpeg" alt="Red Rose" />
+                        <img src="/flower.jpeg" alt="Red Rose" />
                         <p>Red Rose </p>
                         <span>$10.00</span>
                         <button>Add to Cart</button>
