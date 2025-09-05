@@ -29,7 +29,7 @@ app.use(express.json());
 // API: отримати список квітів
 app.get("/api/flowers", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM flowerList ORDER BY id");
+    const result = await pool.query("SELECT * FROM flowerlist ORDER BY id");
     res.json(result.rows);
   } catch (err) {
     console.error("Error fetching flowers:", err);
