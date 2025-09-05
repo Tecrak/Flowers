@@ -11,13 +11,18 @@ type Flower = {
 export function MainPage() {
   const [flowers, setFlowers] = useState<Flower[]>([]);
 
-  useEffect(() => {
-    // Робимо fetch до Node.js API на Render, а не до PostgreSQL
-    fetch("https://flowers-1-h1qt.onrender.com/api/flowers") // заміни на свій URL вебсервісу Render
-      .then((res) => res.json())
-      .then((data) => setFlowers(data))
-      .catch((err) => console.error("Error fetching flowers:", err));
-  }, []);
+    useEffect(() => {
+    fetch("https://flowers-1-h1qt.onrender.com/api/flowers")
+        .then((res) => res.json())
+        .then((data) => {
+        if (Array.isArray(data)) {
+            setFlowers(data);
+        } else {
+            console.error("Flowers data is not an array:", data);
+        }
+        })
+        .catch((err) => console.error("Error fetching flowers:", err));
+    }, []);
 
   return (
     <div className="container">
