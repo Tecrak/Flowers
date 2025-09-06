@@ -113,10 +113,6 @@ export function MainPage() {
       });
 
       if (!res.ok) throw new Error("Failed to place order");
-
-      const data = await res.json();
-      alert("Order placed! ✅ ID: " + data.id);
-
       setCart([]);
     } catch (err) {
       console.error("Error placing order:", err);
