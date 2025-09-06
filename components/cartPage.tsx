@@ -8,14 +8,6 @@ type CartItem = {
   quantity: number;
   imgPath:string;
 };
-
-type Flower = {
-  id: number;
-  name: string;
-  price: number;
-  imgPath: string;
-};
-
 export function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customerName, setCustomerName] = useState("");
@@ -146,18 +138,20 @@ export function CartPage() {
       </div>
       <div className="orderInfo">
       <h2>Your Cart</h2>
-      {cart.map((item) => (
+      <div className="orderItems">
+        {cart.map((item) => (
         <div key={item.flowerId} className="cartItem">
           <p className="cartFlowerName">{item.name}</p>
           <img src={item.imgPath} alt={item.name} />
-          <span className="cartFlowerPrice">${item.price.toFixed(2)}</span>
           <div className="amountButtons">
             <button onClick={() => updateQuantity(item.flowerId, -1)}>-</button>
             <span className="cartQuantity">{item.quantity}</span>
             <button onClick={() => updateQuantity(item.flowerId, 1)}>+</button>
           </div>
+          <span className="cartFlowerPrice">${item.price.toFixed(2)}</span>
         </div>
       ))}
+      </div>
       <p className="total"><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
       <button className="submitOrder" type="submit" disabled={loading}>
           {loading ? "Placing Order..." : "Place Order"}
