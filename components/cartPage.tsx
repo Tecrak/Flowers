@@ -153,7 +153,7 @@ export function CartPage() {
       ))}
       </div>
       <p className="total"><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
-      <button className="submitOrder" type="submit" disabled={loading}>
+      <button className="submitOrder" type="submit" disabled={loading} onClick={placeOrder}>
           {loading ? "Placing Order..." : "Place Order"}
         </button>
       </div>

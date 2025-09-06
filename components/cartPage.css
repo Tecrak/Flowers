@@ -49,6 +49,7 @@ form > input {
 .cartItem {
     width: 220px;
     margin: 5px;
+    height:230px;
     text-align: center;
     background: rgb(255, 119, 0);
 }
