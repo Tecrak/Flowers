@@ -1,14 +1,17 @@
-import {Header} from '../components/header'
-import {MainPage} from '../components/mainPage'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { MainPage } from "../components/MainPage";
+import { CartPage } from "../components/cartPage.tsx";
+import { Header } from "../components/header";
 
-function App() {
+export function App() {
   return (
-    <main>
+    <Router>
       <Header />
-      <MainPage />
-    </main>
-  )
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/components/cartPage.tsx" element={<CartPage />} />
+      </Routes>
+    </Router>
+  );
 }
-
 export default App
