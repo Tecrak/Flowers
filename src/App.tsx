@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { MainPage } from "../components/MainPage";
-import { CartPage } from "../components/cartPage.tsx";
-import { Header } from "../components/header";
+import {Header} from '../components/header'
+import {MainPage} from '../components/mainPage'
+import {CartPage} from '../components/cartPage'
 
 export function App() {
   return (
@@ -9,9 +9,10 @@ export function App() {
       <Header />
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/components/cartPage.tsx" element={<CartPage />} />
+        <Route path="/cart" element={<CartPage />} />
       </Routes>
     </Router>
   );
 }
-export default App
+
+export default App;
