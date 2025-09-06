@@ -46,7 +46,30 @@ app.get("/api/flowers", async (req, res) => {
   }
 });
 
+app.get("/api/orders", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM orders ORDER BY id");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching flowers:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
 
+app.post("/api/orders", async (req, res) => {
+  console.log("POST /api/orders", req.body);
+  const { flowers, price, amount } = req.body;
+  try {
+    const result = await pool.query(
+      "INSERT INTO orders (flowers, price, amount) VALUES ($1, $2, $3) RETURNING *",
+      [flowers, price, amount]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error("Error creating order:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Роздача React фронтенду
 app.use(express.static(path.join(__dirname, "build")));
