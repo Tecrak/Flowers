@@ -16,9 +16,8 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
 
-// Підключення до PostgreSQL через internal URL Render
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || "postgresql://dbflower_user:password@host/dbflower",
+  connectionString: "postgresql://dbflower_user:n7XnpUufCGUHQCHngxQdT6h20Jh8gIuz@dpg-d2tfjeur433s73dcfok0-a/dbflower",
   // SSL не потрібен для internal URL
 });
 
