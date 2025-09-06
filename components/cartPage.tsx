@@ -16,18 +16,20 @@ export function CartPage() {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Завантажуємо корзину з localStorage
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
     const parsedCart: CartItem[] = storedCart
       ? JSON.parse(storedCart).map((item: any) => ({
           ...item,
-          price: Number(item.price),     // обов'язково приводимо до числа
+          price: Number(item.price),
           quantity: Number(item.quantity),
         }))
       : [];
     setCart(parsedCart);
   }, []);
 
+  // Зміна кількості у корзині
   const updateQuantity = (flowerId: number, delta: number) => {
     setCart((prev) => {
       const updated = prev
@@ -44,6 +46,13 @@ export function CartPage() {
 
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  // Форматування локального часу користувача
+  const getLocalDateTimeString = () => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+  };
+
+  // Створення замовлення
   const placeOrder = async () => {
     if (cart.length === 0) return alert("Cart is empty!");
     if (!customerName || !email || !phone || !address) {
@@ -59,7 +68,7 @@ export function CartPage() {
       email,
       phone,
       address,
-      date: new Date().toISOString(),
+      date: getLocalDateTimeString(), // локальний час користувача
     };
 
     try {
