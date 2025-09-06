@@ -17,9 +17,7 @@ type Flower = {
 };
 
 export function CartPage() {
-  const [flowers, setFlowers] = useState<Flower[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [displayedFlowers, setDisplayedFlowers] = useState<Flower[]>([]);
   const [customerName, setCustomerName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
