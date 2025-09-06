@@ -9,7 +9,7 @@ export function App() {
       <Header />
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/cart" element={<CartPage />} />
+        <Route path='/components/cartPage.tsx' element={<CartPage />} />
       </Routes>
     </Router>
   );

@@ -9,7 +9,7 @@ export function Header() {
             <div className="headerContent">
                 <div className="leftPart"> {/*  I am creative in naming*/}
                     <Link to="/">Shop</Link>
-                    <Link to="/components/cartPage.tsx">Shopping cart</Link>
+                    <Link to='/components/cartPage.tsx'>Shopping cart</Link>
                 </div>
                 <div className="logoImg">
                     <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="flower logo" />
