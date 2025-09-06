@@ -16,6 +16,7 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
 
+// Підключення до PostgreSQL через internal URL Render
 const pool = new Pool({
   connectionString: "postgresql://dbflower_user:n7XnpUufCGUHQCHngxQdT6h20Jh8gIuz@dpg-d2tfjeur433s73dcfok0-a/dbflower",
   // SSL не потрібен для internal URL
@@ -25,7 +26,7 @@ const pool = new Pool({
 app.use(cors());
 app.use(express.json());
 
-// Маршрути
+// Отримати магазини
 app.get("/api/flowershop", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM flowershop ORDER BY id");
@@ -36,6 +37,7 @@ app.get("/api/flowershop", async (req, res) => {
   }
 });
 
+// Отримати квіти
 app.get("/api/flowers", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM flowerslist ORDER BY id");
@@ -46,6 +48,7 @@ app.get("/api/flowers", async (req, res) => {
   }
 });
 
+// Отримати всі замовлення
 app.get("/api/orders", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM orders ORDER BY id");
@@ -56,20 +59,17 @@ app.get("/api/orders", async (req, res) => {
   }
 });
 
-// Новий POST для одного замовлення як об’єкт
+// Створити нове замовлення
 app.post("/api/orders", async (req, res) => {
-  const { flowers, price, amount, adress, customername, email, phone } = req.body;
-
-  if (!flowers || !price || !amount) {
-    return res.status(400).json({ error: "Missing required order fields" });
-  }
+  const { flowers, price, address, date, customername, email, phone } = req.body;
+  console.log("Received order:", req.body);
 
   try {
     const result = await pool.query(
       `INSERT INTO orders 
-       (flowers, price, amount, adress, customername, email, phone) 
+        (flowers, price, address, date, customername, email, phone) 
        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [flowers, price, amount, adress || "", customername || "", email || "", phone || ""]
+      [flowers, price, address, date, customername, email, phone]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -80,10 +80,13 @@ app.post("/api/orders", async (req, res) => {
 
 // Роздача React фронтенду
 app.use(express.static(path.join(__dirname, "build")));
+
+// Catch-all для React SPA
 app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
+// Старт сервера
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

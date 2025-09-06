@@ -42,7 +42,6 @@ export function CartPage() {
     });
   };
 
-  const totalAmount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const placeOrder = async () => {
@@ -56,7 +55,6 @@ export function CartPage() {
     const payload = {
       flowers: flowersString,
       price: totalPrice,
-      amount: totalAmount,
       customername: customerName,
       email,
       phone,
@@ -107,7 +105,6 @@ export function CartPage() {
           </div>
         </div>
       ))}
-      <p><strong>Total Quantity:</strong> {totalAmount}</p>
       <p><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
 
       <h3>Customer Information</h3>
