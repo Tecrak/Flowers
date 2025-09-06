@@ -1,4 +1,4 @@
-import "./cartPage.css"; 
+import "./cartPage.css";
 
 export function CartPage(){
     return (
@@ -26,7 +26,6 @@ export function CartPage(){
                         <img src="/public/flower.jpeg"></img>
                     </div>
                     <div className="orderInfo">
-                        
                     </div>
                 </div>
             </div>

@@ -125,7 +125,7 @@ export function MainPage() {
   };
 
   // Підрахунок для відображення
-  const totalAmount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  // const totalAmount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => {
     const flower = flowers.find((f) => f.id === item.flowerId);
     return sum + (flower ? flower.price * item.quantity : 0);
