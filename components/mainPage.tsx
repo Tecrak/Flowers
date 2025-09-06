@@ -16,6 +16,8 @@ type FlowerShop = {
 
 export type CartItem = {
   flowerId: number;
+  name: string;
+  price: number;
   quantity: number;
 };
 
@@ -60,15 +62,15 @@ export function MainPage() {
   };
 
   // Додати в корзину
-  const addToCart = (flowerId: number) => {
+  const addToCart = (flower: Flower) => {
     setCart((prev) => {
-      const existing = prev.find((item) => item.flowerId === flowerId);
+      const existing = prev.find((item) => item.flowerId === flower.id);
       if (existing) {
         return prev.map((item) =>
-          item.flowerId === flowerId ? { ...item, quantity: item.quantity + 1 } : item
+          item.flowerId === flower.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       } else {
-        return [...prev, { flowerId, quantity: 1 }];
+        return [...prev, { flowerId: flower.id, name: flower.name, price: flower.price, quantity: 1 }];
       }
     });
   };
@@ -84,48 +86,14 @@ export function MainPage() {
     );
   };
 
-  // Оформлення замовлення
-  const placeOrder = async () => {
+  // Додати всі товари в localStorage для CartPage
+  const saveCartToLocalStorage = () => {
     if (cart.length === 0) return alert("Cart is empty!");
-
-    const orderedFlowers = cart
-      .map((item) => {
-        const flower = flowers.find((f) => f.id === item.flowerId);
-        return flower ? `${flower.name} x${item.quantity}` : "";
-      })
-      .join(", ");
-
-    const totalAmount = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const totalPrice = cart.reduce((sum, item) => {
-      const flower = flowers.find((f) => f.id === item.flowerId);
-      return sum + (flower ? flower.price * item.quantity : 0);
-    }, 0);
-
-    try {
-      const res = await fetch("https://flowers-1-h1qt.onrender.com/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          flowers: orderedFlowers,
-          price: totalPrice,
-          amount: totalAmount,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Failed to place order");
-      setCart([]);
-    } catch (err) {
-      console.error("Error placing order:", err);
-      alert("Error placing order");
-    }
+    localStorage.setItem("cartItems", JSON.stringify(cart));
+    alert("Items added to cart! Go to Cart page to place the order.");
   };
 
-  // Підрахунок для відображення
-  // const totalAmount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cart.reduce((sum, item) => {
-    const flower = flowers.find((f) => f.id === item.flowerId);
-    return sum + (flower ? flower.price * item.quantity : 0);
-  }, 0);
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     <div className="container">
@@ -161,17 +129,19 @@ export function MainPage() {
                   -
                 </button>
                 <span>{quantity}</span>
-                <button onClick={() => addToCart(flower.id)}>+</button>
-                <p>Total price: ${totalPrice.toFixed(2)}</p>
-                <button onClick={placeOrder} disabled={cart.length === 0}>
-                  Place Order
-                </button>
+                <button onClick={() => addToCart(flower)}>+</button>
               </div>
             </div>
           );
         })}
       </div>
 
+      {cart.length > 0 && (
+        <div className="cartSummary">
+          <p>Total Price: ${totalPrice.toFixed(2)}</p>
+          <button onClick={saveCartToLocalStorage}>Add all to Cart</button>
+        </div>
+      )}
     </div>
   );
 }
