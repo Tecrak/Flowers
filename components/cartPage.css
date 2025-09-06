@@ -1,0 +1,32 @@
+.container {
+    /* display: block; */
+}
+.cartPage {
+    display: flex;
+    justify-content: space-between;
+    background: red;
+    height: 91%;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    width: 40vw;
+    gap: 18px;
+    background: blue;
+    padding-top:40px ;
+}
+form > input {
+    width: 250px;
+    margin-left:10px;
+    padding-left: 21px;
+    height: 40px;
+}
+.cartItems {
+    width: 50vw;
+    background: green;
+}
+.cartOrder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

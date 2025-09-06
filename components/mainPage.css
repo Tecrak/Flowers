@@ -78,14 +78,21 @@
     font-weight: bold;
     font-size: 17px;
 }
-.flowerItem button {
+.flowerItem button:last-child {
     width: 100px;
     height: 40px;
     border-radius: 5px;
     border: none;
     transition: 0.2s;
 }
-.flowerItem button:hover {
+.flowerItem button:not(:last-child) {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    border: none;
+    transition: 0.2s;
+}
+.flowerItem button:hover:last-child {
     background: rgb(255, 52, 38);
     font-weight: bold;
     color:white;
