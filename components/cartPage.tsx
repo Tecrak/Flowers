@@ -6,17 +6,27 @@ type CartItem = {
   name: string;
   price: number;
   quantity: number;
+  imgPath:string;
+};
+
+type Flower = {
+  id: number;
+  name: string;
+  price: number;
+  imgPath: string;
 };
 
 export function CartPage() {
+  const [flowers, setFlowers] = useState<Flower[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [displayedFlowers, setDisplayedFlowers] = useState<Flower[]>([]);
   const [customerName, setCustomerName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Завантажуємо корзину з localStorage
+  // Завантаження корзини з localStorage
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
     const parsedCart: CartItem[] = storedCart
@@ -29,7 +39,7 @@ export function CartPage() {
     setCart(parsedCart);
   }, []);
 
-  // Зміна кількості у корзині
+  // Оновлення кількості у корзині
   const updateQuantity = (flowerId: number, delta: number) => {
     setCart((prev) => {
       const updated = prev
@@ -98,24 +108,11 @@ export function CartPage() {
     }
   };
 
-  if (cart.length === 0) return <p>Your cart is empty.</p>;
+  if (cart.length === 0) return <p className="emptyCart">Your cart is empty.</p>;
 
   return (
     <div className="cartContainer">
-      <h2>Your Cart</h2>
-      {cart.map((item) => (
-        <div key={item.flowerId} className="cartItem">
-          <p>{item.name}</p>
-          <span>${item.price.toFixed(2)}</span>
-          <div>
-            <button onClick={() => updateQuantity(item.flowerId, -1)}>-</button>
-            <span>{item.quantity}</span>
-            <button onClick={() => updateQuantity(item.flowerId, 1)}>+</button>
-          </div>
-        </div>
-      ))}
-      <p><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
-
+      <div className="customerInfo">
       <h3>Customer Information</h3>
       <form
         onSubmit={(e) => {
@@ -147,10 +144,27 @@ export function CartPage() {
           value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
-        <button type="submit" disabled={loading}>
+      </form>
+      </div>
+      <div className="orderInfo">
+      <h2>Your Cart</h2>
+      {cart.map((item) => (
+        <div key={item.flowerId} className="cartItem">
+          <p className="cartFlowerName">{item.name}</p>
+          <img src={item.imgPath} alt={item.name} />
+          <span className="cartFlowerPrice">${item.price.toFixed(2)}</span>
+          <div className="amountButtons">
+            <button onClick={() => updateQuantity(item.flowerId, -1)}>-</button>
+            <span className="cartQuantity">{item.quantity}</span>
+            <button onClick={() => updateQuantity(item.flowerId, 1)}>+</button>
+          </div>
+        </div>
+      ))}
+      <p className="total"><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
+      <button className="submitOrder" type="submit" disabled={loading}>
           {loading ? "Placing Order..." : "Place Order"}
         </button>
-      </form>
+      </div>
     </div>
   );
 }

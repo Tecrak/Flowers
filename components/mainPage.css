@@ -49,7 +49,7 @@
     align-items: center;
     flex-wrap: wrap;
     overflow: scroll;
-    width: 550px;
+    width: 50vw;
     height: 90vh;
 }
 .flowerItem {
@@ -78,24 +78,36 @@
     font-weight: bold;
     font-size: 17px;
 }
-.flowerItem button:last-child {
-    width: 100px;
-    height: 40px;
-    border-radius: 5px;
-    border: none;
-    transition: 0.2s;
-}
-.flowerItem button:not(:last-child) {
+
+.flowerItem button{
     width: 40px;
     height: 40px;
     border-radius: 5px;
     border: none;
     transition: 0.2s;
 }
-.flowerItem button:hover:last-child {
+.flowerItem button:hover {
     background: rgb(255, 52, 38);
     font-weight: bold;
     color:white;
     cursor: pointer;
 }
 /* flowerList part END*/
+/* Submitter */
+.cartSummary {
+    /* background: red; */
+    font-size: 21px;
+    margin-top: 25px;
+}
+.cartSummary > button {
+    width: 120px;
+    height: 40px;
+    border-radius: 5px;
+    border: none;
+    font-size: 16px;
+    transition: 0.2s;
+}
+.cartSummary > button:hover {
+    background: rgb(13, 203, 255);
+    cursor: pointer;
+}

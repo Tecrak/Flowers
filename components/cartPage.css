@@ -1,32 +1,101 @@
-.container {
-    /* display: block; */
+.emptyCart {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size:35px;
 }
-.cartPage {
+.cartContainer {
+    height: 90vh;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    background: red;
-    height: 91%;
+    background: rgb(251, 245, 159);
+}
+.customerInfo { 
+    height: 90vh;
+    width:50%;
+    border: 1px rgb(135, 135, 135) solid;
+    background: rgb(255, 204, 36);
 }
 form {
     display: flex;
     flex-direction: column;
-    width: 40vw;
+    width: 100%;
     gap: 18px;
-    background: blue;
     padding-top:40px ;
 }
 form > input {
-    width: 250px;
+    width: 270px;
     margin-left:10px;
     padding-left: 21px;
     height: 40px;
 }
-.cartItems {
+.orderInfo {
+    width: 50%;
+    height: 90vh;
+}
+.cartItem {
     width: 50vw;
-    background: green;
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+}
+.cartItem > img {
+    width: 150px;
+    height: 150px;
+}
+.cartFlowerName {
+    font-size: 21px;
+}
+.cartFlowerPrice {
+    font-size: 19px;
 }
 .cartOrder {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.cartQuantity {
+    font-size: 19px;
+    width: 16px;
+    height: 30px;
+}
+.amountButtons > button {
+    width: 25px;
+    height: 25px;
+    border-radius: 5px;
+    border: none;
+    transition: 0.2s;
+}
+.amountButtons > button:hover {
+    background: rgb(255, 52, 38);
+    font-weight: bold;
+    color:white;
+    cursor: pointer;
+}
+.endOrder {
+    background: pink;
+    height: 5vh;
+}
+.submitOrder {
+    margin:30px 0px 0px 20px ;
+    border:none;
+    width: 130px;
+    height: 50px;
+    background: rgb(47, 47, 255);
+    border-radius: 10px;
+    color:white;
+    font-weight: bold;
+}
+.submitOrder:hover {
+    cursor: pointer;
+    transition: all 1s ease-out;
+    transform:rotate(360deg);
+    background: black;
+    color:white;
+}
+.total {
+    margin-top: 10px;
+    font-size: 25px;
 }
