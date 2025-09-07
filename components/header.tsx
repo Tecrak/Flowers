@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import "./header.css";
 
 type HeaderProps = {
@@ -11,8 +11,8 @@ export function Header({ onSortChange }: HeaderProps) {
       <div className="headerContent">
         <div className="leftPart">
           <Link to='/'>Shop</Link>
-          <Link to='/cart'>Shopping cart</Link>
-          <Link to='/orders'>Order history</Link>
+          <Link to='/components/cartPage.tsx'>Shopping cart</Link>
+          <Link to='/components/orderStory.tsx'>Order history</Link>
         </div>
         <div className="logoImg">
           <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="flower logo" />
