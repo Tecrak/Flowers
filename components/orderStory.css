@@ -1,0 +1,38 @@
+.storyFilter {
+    background: cadetblue;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 25vh;
+}
+.storyFilter > input {
+    width: 320px;
+    height: 35px;
+    margin: 5px;
+    border: 0;
+    padding: 3px;
+    border-radius: 5px;
+}
+.orderStory {
+    height: 65vh;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    overflow: scroll;
+}
+.storyOrderInfo {
+    width: 300px;
+    height: 220px;
+    font-size: 20px;
+    margin: 2px;
+    padding: 5px;
+    border: 2px grey solid;
+    background: rgb(198, 251, 255);
+    text-shadow: 0.2px 0.2px 0.3px black;
+    transition: 0.1s;
+}
+.storyOrderInfo:hover {
+    transform: scale(1.03);
+}

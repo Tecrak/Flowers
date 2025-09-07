@@ -19,15 +19,20 @@ export type CartItem = {
   name: string;
   price: number;
   quantity: number;
-  imgPath: string; // додали для зображення
+  imgPath: string;
 };
 
-export function MainPage() {
+type MainPageProps = {
+  sortOption: string; 
+};
+
+export function MainPage({ sortOption }: MainPageProps) {
   const [selectedShopId, setSelectedShopId] = useState<number | null>(null);
   const [displayedFlowers, setDisplayedFlowers] = useState<Flower[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [flowers, setFlowers] = useState<Flower[]>([]);
   const [shops, setShops] = useState<FlowerShop[]>([]);
+  const [favorites, setFavorites] = useState<number[]>([]); // новий стейт
 
   useEffect(() => {
     fetch("https://flowers-1-h1qt.onrender.com/api/flowers")
@@ -59,7 +64,35 @@ export function MainPage() {
     setDisplayedFlowers(filtered);
   };
 
-  // Модифікована функція: додаємо imgPath
+  // додатковий useEffect для сортування з урахуванням favorites
+  useEffect(() => {
+    if (displayedFlowers.length === 0) return;
+
+    let sorted = [...displayedFlowers];
+
+    // спочатку сортуємо по favorites
+    sorted.sort((a, b) => {
+      const aFav = favorites.includes(a.id) ? 1 : 0;
+      const bFav = favorites.includes(b.id) ? 1 : 0;
+      return bFav - aFav; // favorite спочатку
+    });
+
+    // потім сортування по ціні
+    if (sortOption === "priceLow") {
+      sorted.sort((a, b) => (favorites.includes(a.id) && favorites.includes(b.id) ? a.price - b.price : 0));
+    } else if (sortOption === "priceHigh") {
+      sorted.sort((a, b) => (favorites.includes(a.id) && favorites.includes(b.id) ? b.price - a.price : 0));
+    }
+
+    setDisplayedFlowers(sorted);
+  }, [sortOption, favorites, displayedFlowers]);
+
+  const toggleFavorite = (flowerId: number) => {
+    setFavorites((prev) =>
+      prev.includes(flowerId) ? prev.filter((id) => id !== flowerId) : [...prev, flowerId]
+    );
+  };
+
   const addToCart = (flower: Flower) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.flowerId === flower.id);
@@ -130,15 +163,21 @@ export function MainPage() {
         {displayedFlowers.map((flower) => {
           const cartItem = cart.find((c) => c.flowerId === flower.id);
           const quantity = cartItem ? cartItem.quantity : 0;
+          const isFavorite = favorites.includes(flower.id);
+
           return (
             <div className="flowerItem" key={flower.id}>
-              <img src={flower.imgPath} alt={flower.name} />
+              <div style={{ position: "relative" }}>
+                <img src={flower.imgPath} alt={flower.name} />
+                <button className="likeButton"
+                  style={{color: isFavorite ? "red" : "#ccc",}} onClick={() => toggleFavorite(flower.id)}>
+                  ♥
+                </button>
+              </div>
               <p>{flower.name}</p>
               <span>${Number(flower.price).toFixed(2)}</span>
-              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                <button onClick={() => removeFromCart(flower.id)} disabled={quantity === 0}>
-                  -
-                </button>
+              <div>
+                <button onClick={() => removeFromCart(flower.id)} disabled={quantity === 0}>-</button>
                 <span>{quantity}</span>
                 <button onClick={() => addToCart(flower)}>+</button>
               </div>

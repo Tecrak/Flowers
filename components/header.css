@@ -9,11 +9,13 @@ header {
   padding: 20px;
   background-color: rgba(71, 166, 255, 0.423);
 }
-.leftPart > Link {
-    padding:10px;
-}
-.leftPart > a:first-child {
+.leftPart > a {
     padding:10px 24px 10px 10px;
+}
+.leftPart > a:hover {
+    background: rgb(145, 181, 249);
+}
+.leftPart > a:not(:last-child) {
     border-right: 2px solid grey;
 }
 .logoImg > *{
