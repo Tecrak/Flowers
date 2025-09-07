@@ -10,9 +10,9 @@ export function Header({ onSortChange }: HeaderProps) {
     <header>
       <div className="headerContent">
         <div className="leftPart">
-          <Link to="/">Shop</Link>
-          <Link to="/components/cartPage.tsx">Shopping cart</Link>
-          <Link to="/components/orderStory.tsx">Order history</Link>
+          <Link to='/'>Shop</Link>
+          <Link to='/components/cartPage.tsx'>Shopping cart</Link>
+          <Link to='/components/orderStory.tsx'>Order history</Link>
         </div>
         <div className="logoImg">
           <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="flower logo" />
