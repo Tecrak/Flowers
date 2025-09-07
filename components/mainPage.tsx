@@ -110,18 +110,19 @@ export function MainPage({ sortOption }: MainPageProps) {
 
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // Створюємо відсортовану копію для відображення
-  const sortedFlowers = [...displayedFlowers]
-    .sort((a, b) => {
-      const aFav = favorites.includes(a.id) ? 1 : 0;
-      const bFav = favorites.includes(b.id) ? 1 : 0;
-      return bFav - aFav; // favorites спочатку
-    })
-    .sort((a, b) => {
-      if (sortOption === "priceLow") return a.price - b.price;
-      if (sortOption === "priceHigh") return b.price - a.price;
-      return 0;
-    });
+  const sortedFlowers = [...displayedFlowers].sort((a, b) => {
+    const aFav = favorites.includes(a.id) ? 1 : 0;
+    const bFav = favorites.includes(b.id) ? 1 : 0;
+
+    // favorites спочатку
+    if (bFav - aFav !== 0) return bFav - aFav;
+
+    // якщо обидва або жоден не favorite, сортуємо по ціні
+    if (sortOption === "priceLow") return a.price - b.price;
+    if (sortOption === "priceHigh") return b.price - a.price;
+
+    return 0;
+  });
 
   return (
     <div className="container">
