@@ -14,8 +14,8 @@ export function App() {
       <Header onSortChange={setSortOption} />
       <Routes>
         <Route path='/' element={<MainPage sortOption={sortOption} />} />
-        <Route path='/components/cartPage.tsx' element={<CartPage />} />
-        <Route path='/components/orderStory.tsx' element={<OrderStory />} />
+        <Route path='/cart' element={<CartPage />} />
+        <Route path='/orders' element={<OrderStory />} />
       </Routes>
     </Router>
   );
