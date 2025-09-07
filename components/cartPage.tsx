@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./cartPage.css";
 
 type CartItem = {
@@ -17,6 +17,21 @@ type OrderInfo = {
   date: string;
 };
 
+type Shop = {
+  id: number;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+};
+
+declare global {
+  interface Window {
+    initMap: () => void;
+    google: any;
+  }
+}
+
 export function CartPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customerName, setCustomerName] = useState("");
@@ -24,22 +39,112 @@ export function CartPage() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // ✅ Стейт для фінального блоку
   const [orderInfo, setOrderInfo] = useState<OrderInfo | null>(null);
+  const [shops, setShops] = useState<Shop[]>([]);
+  const [selectedShopIds, setSelectedShopIds] = useState<number[]>([]);
 
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<any>(null);
+  const markersRef = useRef<any[]>([]);
+
+  // ----------------------
+  // Load cart and shops
   useEffect(() => {
-    const storedCart = localStorage.getItem("cartItems");
-    const parsedCart: CartItem[] = storedCart
-      ? JSON.parse(storedCart).map((item: any) => ({
-          ...item,
-          price: Number(item.price),
-          quantity: Number(item.quantity),
-        }))
-      : [];
-    setCart(parsedCart);
+    const storedCart = localStorage.getItem("cartData");
+    if (storedCart) {
+      const parsed = JSON.parse(storedCart);
+      setCart(parsed.items);
+      if (parsed.shops) {
+        setSelectedShopIds(parsed.shops.map((s: any) => s.id));
+      }
+    }
+
+    fetch("https://flowers-1-h1qt.onrender.com/api/flowershop")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const parsedShops = data.map((s) => ({
+            ...s,
+            lat: Number(s.lat),
+            lng: Number(s.lng),
+          }));
+          setShops(parsedShops);
+        }
+      })
+      .catch((err) => console.error("Error loading shops:", err));
   }, []);
 
+  // ----------------------
+  // Load Google Maps
+  useEffect(() => {
+    if (!mapRef.current || !shops.length) return;
+
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyADShnyF6KSrbAmaGreeu-xep64qhnj7pE&callback=initMap`;
+    script.async = true;
+    window.initMap = initMap;
+    document.body.appendChild(script);
+  }, [shops]);
+
+  const initMap = () => {
+    if (!mapRef.current) return;
+
+    const gMap = new window.google.maps.Map(mapRef.current, {
+      center: { lat: 50.4501, lng: 30.5234 },
+      zoom: 12,
+    });
+    setMap(gMap);
+
+    // Створюємо маркери для всіх магазинів у кошику
+    markersRef.current = shops
+      .filter((shop) => selectedShopIds.includes(shop.id))
+      .map((shop) =>
+        new window.google.maps.Marker({
+          position: { lat: shop.lat, lng: shop.lng },
+          map: gMap,
+          title: shop.name,
+          icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+        })
+      );
+
+    centerMapOnSelected();
+  };
+
+  const centerMapOnSelected = () => {
+    if (selectedShopIds.length === 0 || !map) return;
+
+    const selectedShops = shops.filter((s) => selectedShopIds.includes(s.id));
+    const avgLat =
+      selectedShops.reduce((sum, s) => sum + s.lat, 0) / selectedShops.length;
+    const avgLng =
+      selectedShops.reduce((sum, s) => sum + s.lng, 0) / selectedShops.length;
+    map.setCenter({ lat: avgLat, lng: avgLng });
+  };
+
+  // ----------------------
+  // Update marker colors при зміні selectedShopIds
+  useEffect(() => {
+    if (!map || !markersRef.current.length) return;
+
+    markersRef.current.forEach((marker) => {
+      marker.setMap(null);
+    });
+
+    markersRef.current = shops
+      .filter((shop) => selectedShopIds.includes(shop.id))
+      .map((shop) =>
+        new window.google.maps.Marker({
+          position: { lat: shop.lat, lng: shop.lng },
+          map: map,
+          title: shop.name,
+          icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+        })
+      );
+
+    centerMapOnSelected();
+  }, [selectedShopIds, map]);
+
+  // ----------------------
   const updateQuantity = (flowerId: number, delta: number) => {
     setCart((prev) => {
       const updated = prev
@@ -49,7 +154,19 @@ export function CartPage() {
             : item
         )
         .filter((item) => item.quantity > 0);
-      localStorage.setItem("cartItems", JSON.stringify(updated));
+
+      // Перевіряємо, чи залишилися магазини у кошику
+      let shopsInCart = selectedShopIds;
+      if (updated.length === 0) shopsInCart = [];
+
+      localStorage.setItem(
+        "cartData",
+        JSON.stringify({
+          items: updated,
+          shops: shopsInCart.map((id) => shops.find((s) => s.id === id)),
+        })
+      );
+      setSelectedShopIds(shopsInCart);
       return updated;
     });
   };
@@ -58,11 +175,16 @@ export function CartPage() {
 
   const getLocalDateTimeString = () => {
     const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
-      now.getDate()
-    ).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(
-      now.getMinutes()
-    ).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(
+      2,
+      "0"
+    )}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(
+      2,
+      "0"
+    )}`;
   };
 
   const placeOrder = async () => {
@@ -70,6 +192,7 @@ export function CartPage() {
     if (!customerName || !email || !phone || !address) {
       return alert("Please fill in all fields!");
     }
+    if (selectedShopIds.length === 0) return alert("Please select at least one shop!");
 
     const flowersString = cart.map((item) => `${item.name} x${item.quantity}`).join(", ");
 
@@ -80,6 +203,7 @@ export function CartPage() {
       email,
       phone,
       address,
+      shopIds: selectedShopIds,
       date: getLocalDateTimeString(),
     };
 
@@ -90,12 +214,9 @@ export function CartPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (!res.ok) throw new Error("Failed to place order");
 
       const data = await res.json();
-
-      // ✅ Зберігаємо дані замовлення
       setOrderInfo({
         id: data.id,
         flowers: cart,
@@ -105,7 +226,8 @@ export function CartPage() {
       });
 
       setCart([]);
-      localStorage.removeItem("cartItems");
+      setSelectedShopIds([]);
+      localStorage.removeItem("cartData");
       setCustomerName("");
       setEmail("");
       setPhone("");
@@ -118,6 +240,7 @@ export function CartPage() {
     }
   };
 
+  // ----------------------
   return (
     <>
       <div className="cartContainer">
@@ -154,7 +277,12 @@ export function CartPage() {
               onChange={(e) => setAddress(e.target.value)}
             />
           </form>
+          <div
+            ref={mapRef}
+            style={{ width: "100%", height: "300px", marginTop: "10px", border: "1px solid #ccc" }}
+          ></div>
         </div>
+
         <div className="orderInfo">
           <h2>Your Cart</h2>
           {cart.length === 0 ? (
@@ -171,19 +299,14 @@ export function CartPage() {
                       <span className="cartQuantity">{item.quantity}</span>
                       <button onClick={() => updateQuantity(item.flowerId, 1)}>+</button>
                     </div>
-                    <span className="cartFlowerPrice">${item.price.toFixed(2)}</span>
+                    <span className="cartFlowerPrice">{item.price}</span>
                   </div>
                 ))}
               </div>
               <p className="total">
                 <strong>Total Price:</strong> ${totalPrice.toFixed(2)}
               </p>
-              <button
-                className="submitOrder"
-                type="submit"
-                disabled={loading}
-                onClick={placeOrder}
-              >
+              <button className="submitOrder" disabled={loading} onClick={placeOrder}>
                 {loading ? "Placing Order..." : "Place Order"}
               </button>
             </>

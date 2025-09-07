@@ -12,6 +12,8 @@ type FlowerShop = {
   id: number;
   name: string;
   flowers: string;
+  lat: number;
+  lng: number;
 };
 
 export type CartItem = {
@@ -27,7 +29,8 @@ type MainPageProps = {
 };
 
 export function MainPage({ sortOption }: MainPageProps) {
-  const [selectedShopId, setSelectedShopId] = useState<number | null>(null);
+  const [selectedShopId, setSelectedShopId] = useState<number | null>(null); // для відображення квітів
+  const [selectedShopIdsInCart, setSelectedShopIdsInCart] = useState<number[]>([]); // всі магазини у кошику
   const [displayedFlowers, setDisplayedFlowers] = useState<Flower[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [flowers, setFlowers] = useState<Flower[]>([]);
@@ -37,6 +40,7 @@ export function MainPage({ sortOption }: MainPageProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const FLOWERS_PER_PAGE = 6;
 
+  // --- Fetch flowers
   useEffect(() => {
     fetch("https://flowers-1-h1qt.onrender.com/api/flowers")
       .then((res) => res.json())
@@ -46,6 +50,7 @@ export function MainPage({ sortOption }: MainPageProps) {
       .catch((err) => console.error("Error fetching flowers:", err));
   }, []);
 
+  // --- Fetch shops
   useEffect(() => {
     if (flowers.length === 0) return;
 
@@ -60,39 +65,47 @@ export function MainPage({ sortOption }: MainPageProps) {
       .catch((err) => console.error("Error fetching shops:", err));
   }, [flowers]);
 
+  // --- Shop selection
   const handleShopClick = (shop: FlowerShop) => {
     setSelectedShopId(shop.id);
     const shopFlowers = shop.flowers.split(",").map((f) => f.trim());
     const filtered = flowers.filter((flower) => shopFlowers.includes(flower.name));
     setDisplayedFlowers(filtered);
-    setCurrentPage(0); // скидаємо на першу сторінку
+    setCurrentPage(0);
   };
 
+  // --- Favorites toggle
   const toggleFavorite = (flowerId: number) => {
     setFavorites((prev) =>
       prev.includes(flowerId) ? prev.filter((id) => id !== flowerId) : [...prev, flowerId]
     );
   };
 
+  // --- Add/remove flowers from cart
   const addToCart = (flower: Flower) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.flowerId === flower.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.flowerId === flower.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      } else {
-        return [
-          ...prev,
-          {
-            flowerId: flower.id,
-            name: flower.name,
-            price: flower.price,
-            quantity: 1,
-            imgPath: flower.imgPath,
-          },
-        ];
+      const newCart = existing
+        ? prev.map((item) =>
+            item.flowerId === flower.id ? { ...item, quantity: item.quantity + 1 } : item
+          )
+        : [
+            ...prev,
+            {
+              flowerId: flower.id,
+              name: flower.name,
+              price: flower.price,
+              quantity: 1,
+              imgPath: flower.imgPath,
+            },
+          ];
+
+      // Додаємо shop у список магазинів у кошику
+      if (selectedShopId && !selectedShopIdsInCart.includes(selectedShopId)) {
+        setSelectedShopIdsInCart((prevIds) => [...prevIds, selectedShopId]);
       }
+
+      return newCart;
     });
   };
 
@@ -106,14 +119,34 @@ export function MainPage({ sortOption }: MainPageProps) {
     );
   };
 
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // --- Save cart with all shops info
   const saveCartToLocalStorage = () => {
     if (cart.length === 0) return alert("Cart is empty!");
-    localStorage.setItem("cartItems", JSON.stringify(cart));
+    if (selectedShopIdsInCart.length === 0) return alert("No shops selected in cart!");
+
+    const shopsInCart = shops
+      .filter((s) => selectedShopIdsInCart.includes(s.id))
+      .map((s) => ({
+        id: s.id,
+        name: s.name,
+        lat: Number(s.lat),
+        lng: Number(s.lng),
+      }));
+
+    localStorage.setItem(
+      "cartData",
+      JSON.stringify({
+        items: cart,
+        shops: shopsInCart,
+      })
+    );
+
     alert("Items added to cart! Go to Cart page to place the order.");
   };
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
+  // --- Sorting
   const sortedFlowers = [...displayedFlowers].sort((a, b) => {
     const aFav = favorites.includes(a.id) ? 1 : 0;
     const bFav = favorites.includes(b.id) ? 1 : 0;
@@ -126,7 +159,7 @@ export function MainPage({ sortOption }: MainPageProps) {
     return 0;
   });
 
-  // пагінація
+  // --- Pagination
   const paginatedFlowers = sortedFlowers.slice(
     currentPage * FLOWERS_PER_PAGE,
     (currentPage + 1) * FLOWERS_PER_PAGE
@@ -201,7 +234,7 @@ export function MainPage({ sortOption }: MainPageProps) {
               Page {currentPage + 1} of {totalPages}
             </span>
 
-            {(currentPage + 1) < totalPages && (
+            {currentPage + 1 < totalPages && (
               <button onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
             )}
           </div>
