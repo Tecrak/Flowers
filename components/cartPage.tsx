@@ -95,20 +95,59 @@ export function CartPage() {
     });
     setMap(gMap);
 
-    // Створюємо маркери для всіх магазинів у кошику
+    // Створюємо маркери магазинів зеленого кольору
     markersRef.current = shops
       .filter((shop) => selectedShopIds.includes(shop.id))
-      .map((shop) =>
-        new window.google.maps.Marker({
+      .map((shop) => {
+        const marker = new window.google.maps.Marker({
           position: { lat: shop.lat, lng: shop.lng },
           map: gMap,
           title: shop.name,
           icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-        })
-      );
+        });
+        return marker;
+      });
+
+    // --------------------
+    // Додаємо обробник кліку по мапі
+    gMap.addListener("click", (e: any) => {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+
+      // Видаляємо попередній червоний маркер, якщо він є
+      markersRef.current = markersRef.current.filter((m) => {
+        if (m.customRed) {
+          m.setMap(null);
+          return false;
+        }
+        return true;
+      });
+
+      // Створюємо новий червоний маркер
+      const redMarker = new window.google.maps.Marker({
+        position: { lat, lng },
+        map: gMap,
+        icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+      });
+      // Позначаємо його як "червоний"
+      (redMarker as any).customRed = true;
+      markersRef.current.push(redMarker);
+
+      // Використовуємо Geocoder для отримання адреси
+      const geocoder = new window.google.maps.Geocoder();
+      geocoder.geocode({ location: { lat, lng } }, (results: any, status: any) => {
+        if (status === "OK" && results[0]) {
+          setAddress(results[0].formatted_address);
+        } else {
+          console.error("Geocode failed:", status);
+          setAddress(`${lat.toFixed(6)}, ${lng.toFixed(6)}`); // fallback
+        }
+      });
+    });
 
     centerMapOnSelected();
   };
+
 
   const centerMapOnSelected = () => {
     if (selectedShopIds.length === 0 || !map) return;
