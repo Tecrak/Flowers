@@ -1,15 +1,22 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import {Header} from '../components/header'
-import {MainPage} from '../components/mainPage'
-import {CartPage} from '../components/cartPage'
+import { Header } from "../components/header";
+import { MainPage } from "../components/mainPage";
+import { CartPage } from "../components/cartPage";
+import {OrderStory} from "../components/orderStory";
+import { useState } from "react";
 
 export function App() {
+  const [sortOption, setSortOption] = useState<string>("");
+
   return (
     <Router>
-      <Header />
+      {/* Header тепер має доступ до сортування */}
+      <Header onSortChange={setSortOption} />
       <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path='/components/cartPage.tsx' element={<CartPage />} />
+        {/* Передаємо sortOption у MainPage */}
+        <Route path="/" element={<MainPage sortOption={sortOption} />} />
+        <Route path="/components/cartPage.tsx" element={<CartPage />} />
+        <Route path="/components/orderStory.tsx" element={<OrderStory />} />
       </Routes>
     </Router>
   );
