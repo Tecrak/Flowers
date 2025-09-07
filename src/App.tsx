@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Header } from "../components/header";
-import { MainPage } from "../components/mainPage";
-import { CartPage } from "../components/cartPage";
-import {OrderStory} from "../components/orderStory";
+import {Header} from '../components/header'
+import {MainPage} from '../components/mainPage'
+import {CartPage} from '../components/cartPage'
 import { useState } from "react";
+import {OrderStory} from '../components/orderStory';
+
 
 export function App() {
   const [sortOption, setSortOption] = useState<string>("");
