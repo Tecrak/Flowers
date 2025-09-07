@@ -16,8 +16,8 @@ export function App() {
       <Routes>
         {/* Передаємо sortOption у MainPage */}
         <Route path="/" element={<MainPage sortOption={sortOption} />} />
-        <Route path="/components/cartPage.tsx" element={<CartPage />} />
-        <Route path="/components/orderStory.tsx" element={<OrderStory />} />
+        <Route path='/components/cartPage.tsx' element={<CartPage />} />
+        <Route path='/components/orderStory.tsx' element={<OrderStory />} />
       </Routes>
     </Router>
   );
