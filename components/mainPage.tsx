@@ -32,7 +32,7 @@ export function MainPage({ sortOption }: MainPageProps) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [flowers, setFlowers] = useState<Flower[]>([]);
   const [shops, setShops] = useState<FlowerShop[]>([]);
-  const [favorites, setFavorites] = useState<number[]>([]); // новий стейт
+  const [favorites, setFavorites] = useState<number[]>([]);
 
   useEffect(() => {
     fetch("https://flowers-1-h1qt.onrender.com/api/flowers")
@@ -63,29 +63,6 @@ export function MainPage({ sortOption }: MainPageProps) {
     const filtered = flowers.filter((flower) => shopFlowers.includes(flower.name));
     setDisplayedFlowers(filtered);
   };
-
-  // додатковий useEffect для сортування з урахуванням favorites
-  useEffect(() => {
-    if (displayedFlowers.length === 0) return;
-
-    let sorted = [...displayedFlowers];
-
-    // спочатку сортуємо по favorites
-    sorted.sort((a, b) => {
-      const aFav = favorites.includes(a.id) ? 1 : 0;
-      const bFav = favorites.includes(b.id) ? 1 : 0;
-      return bFav - aFav; // favorite спочатку
-    });
-
-    // потім сортування по ціні
-    if (sortOption === "priceLow") {
-      sorted.sort((a, b) => (favorites.includes(a.id) && favorites.includes(b.id) ? a.price - b.price : 0));
-    } else if (sortOption === "priceHigh") {
-      sorted.sort((a, b) => (favorites.includes(a.id) && favorites.includes(b.id) ? b.price - a.price : 0));
-    }
-
-    setDisplayedFlowers(sorted);
-  }, [sortOption, favorites, displayedFlowers]);
 
   const toggleFavorite = (flowerId: number) => {
     setFavorites((prev) =>
@@ -133,6 +110,19 @@ export function MainPage({ sortOption }: MainPageProps) {
 
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  // Створюємо відсортовану копію для відображення
+  const sortedFlowers = [...displayedFlowers]
+    .sort((a, b) => {
+      const aFav = favorites.includes(a.id) ? 1 : 0;
+      const bFav = favorites.includes(b.id) ? 1 : 0;
+      return bFav - aFav; // favorites спочатку
+    })
+    .sort((a, b) => {
+      if (sortOption === "priceLow") return a.price - b.price;
+      if (sortOption === "priceHigh") return b.price - a.price;
+      return 0;
+    });
+
   return (
     <div className="container">
       <div className="shopList">
@@ -160,7 +150,7 @@ export function MainPage({ sortOption }: MainPageProps) {
       </div>
 
       <div className="flowerList">
-        {displayedFlowers.map((flower) => {
+        {sortedFlowers.map((flower) => {
           const cartItem = cart.find((c) => c.flowerId === flower.id);
           const quantity = cartItem ? cartItem.quantity : 0;
           const isFavorite = favorites.includes(flower.id);
@@ -169,15 +159,20 @@ export function MainPage({ sortOption }: MainPageProps) {
             <div className="flowerItem" key={flower.id}>
               <div style={{ position: "relative" }}>
                 <img src={flower.imgPath} alt={flower.name} />
-                <button className="likeButton"
-                  style={{color: isFavorite ? "red" : "#ccc",}} onClick={() => toggleFavorite(flower.id)}>
+                <button
+                  className="likeButton"
+                  style={{ color: isFavorite ? "red" : "#ccc" }}
+                  onClick={() => toggleFavorite(flower.id)}
+                >
                   ♥
                 </button>
               </div>
               <p>{flower.name}</p>
               <span>${Number(flower.price).toFixed(2)}</span>
-              <div>
-                <button onClick={() => removeFromCart(flower.id)} disabled={quantity === 0}>-</button>
+              <div style={{ display: "flex", gap: "5px" }}>
+                <button onClick={() => removeFromCart(flower.id)} disabled={quantity === 0}>
+                  -
+                </button>
                 <span>{quantity}</span>
                 <button onClick={() => addToCart(flower)}>+</button>
               </div>
