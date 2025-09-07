@@ -23,7 +23,7 @@ export type CartItem = {
 };
 
 type MainPageProps = {
-  sortOption: string; 
+  sortOption: string;
 };
 
 export function MainPage({ sortOption }: MainPageProps) {
@@ -33,6 +33,9 @@ export function MainPage({ sortOption }: MainPageProps) {
   const [flowers, setFlowers] = useState<Flower[]>([]);
   const [shops, setShops] = useState<FlowerShop[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const FLOWERS_PER_PAGE = 6;
 
   useEffect(() => {
     fetch("https://flowers-1-h1qt.onrender.com/api/flowers")
@@ -62,6 +65,7 @@ export function MainPage({ sortOption }: MainPageProps) {
     const shopFlowers = shop.flowers.split(",").map((f) => f.trim());
     const filtered = flowers.filter((flower) => shopFlowers.includes(flower.name));
     setDisplayedFlowers(filtered);
+    setCurrentPage(0); // скидаємо на першу сторінку
   };
 
   const toggleFavorite = (flowerId: number) => {
@@ -114,15 +118,21 @@ export function MainPage({ sortOption }: MainPageProps) {
     const aFav = favorites.includes(a.id) ? 1 : 0;
     const bFav = favorites.includes(b.id) ? 1 : 0;
 
-    // favorites спочатку
     if (bFav - aFav !== 0) return bFav - aFav;
 
-    // якщо обидва або жоден не favorite, сортуємо по ціні
     if (sortOption === "priceLow") return a.price - b.price;
     if (sortOption === "priceHigh") return b.price - a.price;
 
     return 0;
   });
+
+  // пагінація
+  const paginatedFlowers = sortedFlowers.slice(
+    currentPage * FLOWERS_PER_PAGE,
+    (currentPage + 1) * FLOWERS_PER_PAGE
+  );
+
+  const totalPages = Math.ceil(sortedFlowers.length / FLOWERS_PER_PAGE);
 
   return (
     <div className="container">
@@ -151,7 +161,7 @@ export function MainPage({ sortOption }: MainPageProps) {
       </div>
 
       <div className="flowerList">
-        {sortedFlowers.map((flower) => {
+        {paginatedFlowers.map((flower) => {
           const cartItem = cart.find((c) => c.flowerId === flower.id);
           const quantity = cartItem ? cartItem.quantity : 0;
           const isFavorite = favorites.includes(flower.id);
@@ -180,6 +190,22 @@ export function MainPage({ sortOption }: MainPageProps) {
             </div>
           );
         })}
+
+        {totalPages > 1 && (
+          <div style={{ width: "100%", textAlign: "center", marginTop: "15px" }}>
+            {currentPage > 0 && (
+              <button onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+            )}
+
+            <span style={{ margin: "0 10px" }}>
+              Page {currentPage + 1} of {totalPages}
+            </span>
+
+            {(currentPage + 1) < totalPages && (
+              <button onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
