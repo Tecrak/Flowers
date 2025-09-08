@@ -29,18 +29,16 @@ type MainPageProps = {
 };
 
 export function MainPage({ sortOption }: MainPageProps) {
-  const [selectedShopId, setSelectedShopId] = useState<number | null>(null); // для відображення квітів
-  const [selectedShopIdsInCart, setSelectedShopIdsInCart] = useState<number[]>([]); // всі магазини у кошику
+  const [selectedShopId, setSelectedShopId] = useState<number | null>(null); 
+  const [selectedShopIdsInCart, setSelectedShopIdsInCart] = useState<number[]>([]);
   const [displayedFlowers, setDisplayedFlowers] = useState<Flower[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [flowers, setFlowers] = useState<Flower[]>([]);
   const [shops, setShops] = useState<FlowerShop[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
-
   const [currentPage, setCurrentPage] = useState(0);
   const FLOWERS_PER_PAGE = 6;
-
-  // --- Fetch flowers
+  
   useEffect(() => {
     fetch("https://flowers-1-h1qt.onrender.com/api/flowers")
       .then((res) => res.json())
@@ -50,7 +48,6 @@ export function MainPage({ sortOption }: MainPageProps) {
       .catch((err) => console.error("Error fetching flowers:", err));
   }, []);
 
-  // --- Fetch shops
   useEffect(() => {
     if (flowers.length === 0) return;
 
@@ -65,7 +62,6 @@ export function MainPage({ sortOption }: MainPageProps) {
       .catch((err) => console.error("Error fetching shops:", err));
   }, [flowers]);
 
-  // --- Shop selection
   const handleShopClick = (shop: FlowerShop) => {
     setSelectedShopId(shop.id);
     const shopFlowers = shop.flowers.split(",").map((f) => f.trim());
@@ -74,14 +70,12 @@ export function MainPage({ sortOption }: MainPageProps) {
     setCurrentPage(0);
   };
 
-  // --- Favorites toggle
   const toggleFavorite = (flowerId: number) => {
     setFavorites((prev) =>
       prev.includes(flowerId) ? prev.filter((id) => id !== flowerId) : [...prev, flowerId]
     );
   };
 
-  // --- Add/remove flowers from cart
   const addToCart = (flower: Flower) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.flowerId === flower.id);
@@ -100,7 +94,6 @@ export function MainPage({ sortOption }: MainPageProps) {
             },
           ];
 
-      // Додаємо shop у список магазинів у кошику
       if (selectedShopId && !selectedShopIdsInCart.includes(selectedShopId)) {
         setSelectedShopIdsInCart((prevIds) => [...prevIds, selectedShopId]);
       }
@@ -121,7 +114,6 @@ export function MainPage({ sortOption }: MainPageProps) {
 
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // --- Save cart with all shops info
   const saveCartToLocalStorage = () => {
     if (cart.length === 0) return alert("Cart is empty!");
     if (selectedShopIdsInCart.length === 0) return alert("No shops selected in cart!");
@@ -146,7 +138,6 @@ export function MainPage({ sortOption }: MainPageProps) {
     alert("Items added to cart! Go to Cart page to place the order.");
   };
 
-  // --- Sorting
   const sortedFlowers = [...displayedFlowers].sort((a, b) => {
     const aFav = favorites.includes(a.id) ? 1 : 0;
     const bFav = favorites.includes(b.id) ? 1 : 0;
@@ -159,7 +150,6 @@ export function MainPage({ sortOption }: MainPageProps) {
     return 0;
   });
 
-  // --- Pagination
   const paginatedFlowers = sortedFlowers.slice(
     currentPage * FLOWERS_PER_PAGE,
     (currentPage + 1) * FLOWERS_PER_PAGE
@@ -243,3 +233,4 @@ export function MainPage({ sortOption }: MainPageProps) {
     </div>
   );
 }
+
