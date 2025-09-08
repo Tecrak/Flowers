@@ -1,18 +1,18 @@
 .emptyCart {
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-  height: 90.2vh;
-  width: 100%;
-  font-size: 35px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: black;
-  background: white;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    height: 91.6vh;
+    width: 100%;
+    font-size: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    background: white;
 }
 .cartContainer {
-    height: 90vh;
+    height: 91.5vh;
     display: flex;
     align-items: center;
     justify-content: space-between;

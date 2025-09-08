@@ -2,8 +2,7 @@
     background: rgb(255, 235, 157);
     display: flex;
     justify-content: space-between;
-    height: 90vh;
-    /* flex-direction: column; */
+    height: 91.5vh;
 }
 /* Shplist part */
 .shopList {
