@@ -17,6 +17,7 @@ type OrderInfo = {
   date: string;
 };
 
+
 type Shop = {
   id: number;
   name: string;
@@ -42,13 +43,10 @@ export function CartPage() {
   const [orderInfo, setOrderInfo] = useState<OrderInfo | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
   const [selectedShopIds, setSelectedShopIds] = useState<number[]>([]);
-
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
   const markersRef = useRef<any[]>([]);
 
-  // ----------------------
-  // Load cart and shops
   useEffect(() => {
     const storedCart = localStorage.getItem("cartData");
     if (storedCart) {
@@ -74,8 +72,6 @@ export function CartPage() {
       .catch((err) => console.error("Error loading shops:", err));
   }, []);
 
-  // ----------------------
-  // Load Google Maps
   useEffect(() => {
     if (!mapRef.current || !shops.length) return;
 
@@ -95,7 +91,6 @@ export function CartPage() {
     });
     setMap(gMap);
 
-    // Створюємо маркери магазинів зеленого кольору
     markersRef.current = shops
       .filter((shop) => selectedShopIds.includes(shop.id))
       .map((shop) => {
@@ -108,13 +103,9 @@ export function CartPage() {
         return marker;
       });
 
-    // --------------------
-    // Додаємо обробник кліку по мапі
     gMap.addListener("click", (e: any) => {
       const lat = e.latLng.lat();
       const lng = e.latLng.lng();
-
-      // Видаляємо попередній червоний маркер, якщо він є
       markersRef.current = markersRef.current.filter((m) => {
         if (m.customRed) {
           m.setMap(null);
@@ -123,17 +114,15 @@ export function CartPage() {
         return true;
       });
 
-      // Створюємо новий червоний маркер
       const redMarker = new window.google.maps.Marker({
         position: { lat, lng },
         map: gMap,
         icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
       });
-      // Позначаємо його як "червоний"
+
       (redMarker as any).customRed = true;
       markersRef.current.push(redMarker);
 
-      // Використовуємо Geocoder для отримання адреси
       const geocoder = new window.google.maps.Geocoder();
       geocoder.geocode({ location: { lat, lng } }, (results: any, status: any) => {
         if (status === "OK" && results[0]) {
@@ -160,8 +149,6 @@ export function CartPage() {
     map.setCenter({ lat: avgLat, lng: avgLng });
   };
 
-  // ----------------------
-  // Update marker colors при зміні selectedShopIds
   useEffect(() => {
     if (!map || !markersRef.current.length) return;
 
@@ -183,7 +170,6 @@ export function CartPage() {
     centerMapOnSelected();
   }, [selectedShopIds, map]);
 
-  // ----------------------
   const updateQuantity = (flowerId: number, delta: number) => {
     setCart((prev) => {
       const updated = prev
@@ -194,7 +180,6 @@ export function CartPage() {
         )
         .filter((item) => item.quantity > 0);
 
-      // Перевіряємо, чи залишилися магазини у кошику
       let shopsInCart = selectedShopIds;
       if (updated.length === 0) shopsInCart = [];
 
@@ -279,7 +264,6 @@ export function CartPage() {
     }
   };
 
-  // ----------------------
   return (
     <>
       <div className="cartContainer">
@@ -384,3 +368,4 @@ export function CartPage() {
     </>
   );
 }
+
