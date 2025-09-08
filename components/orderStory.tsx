@@ -30,8 +30,6 @@ export function OrderStory() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [flowersDB, setFlowersDB] = useState<FlowerDB[]>([]);
   const [orderInfo, setOrderInfo] = useState<Order & { flowersWithImg: FlowerItem[] } | null>(null);
-
-  // стейти для фільтру
   const [filterId, setFilterId] = useState("");
   const [filterEmail, setFilterEmail] = useState("");
   const [filterPhone, setFilterPhone] = useState("");
@@ -73,7 +71,6 @@ export function OrderStory() {
     setOrderInfo({ ...order, flowersWithImg });
   };
 
-  // фільтруємо список замовлень
   const filteredOrders = orders.filter((order) => {
     const matchesId = filterId ? order.id.toString().includes(filterId) : true;
     const matchesEmail = filterEmail ? order.email.toLowerCase().includes(filterEmail.toLowerCase()) : true;
@@ -156,3 +153,4 @@ export function OrderStory() {
     </>
   );
 }
+
